@@ -119,6 +119,9 @@ def remove_admin(user_id, admin_to_remove):
             cursor.execute("DELETE FROM administrators WHERE user_id = %s", (admin_to_remove,))
             conn.commit()
         conn.close()
-        
+	    
+def get_user_count(conn):
+    conn.execute("SELECT COUNT(*) FROM users")
+    return conn.fetchone()[0]
 
 
