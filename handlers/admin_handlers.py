@@ -26,3 +26,16 @@ def handle_remove_admin(message):
             bot.send_message(message.chat.id, "Используйте: /remove_admin <user_id>")
     else:
         bot.send_message(message.chat.id, "Только главный администратор может удалять администраторов.")
+        
+@bot.message_handler(commands=['stats'])
+def stats_handler(message):
+    # Проверка, является ли отправитель администратором
+    user_id = message.from_user.id
+    is_admin = is_admin(user_id)
+
+    if is_admin:
+        conn = get_db_connection()
+        user_count = get_user_count(conn)
+        bot.reply_to(message, f"Количество зарегистрированных пользователей: {user_count}")
+    else:
+        bot.reply_to(message, "У вас нет прав для выполнения этой команды.")
