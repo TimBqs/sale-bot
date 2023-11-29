@@ -121,7 +121,8 @@ def remove_admin(user_id, admin_to_remove):
         conn.close()
 	    
 def get_user_count(conn):
-    conn.cursor.execute("SELECT COUNT(*) FROM users")
-    return conn.cursor.fetchone()[0]
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM users")
+    return cursor.fetchone()[0]
 
 
