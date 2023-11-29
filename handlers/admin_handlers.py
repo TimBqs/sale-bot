@@ -31,9 +31,9 @@ def handle_remove_admin(message):
 def stats_handler(message):
     # Проверка, является ли отправитель администратором
     user_id = message.from_user.id
-    is_admin = is_admin(user_id)
+    admin_check = is_admin(user_id)
 
-    if is_admin:
+    if admin_check:
         conn = get_db_connection()
         user_count = get_user_count(conn)
         bot.reply_to(message, f"Количество зарегистрированных пользователей: {user_count}")
