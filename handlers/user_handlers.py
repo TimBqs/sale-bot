@@ -19,8 +19,9 @@ def handle_start(message):
           send_full_promotion(message.chat.id, current_promotion)
       else:
           bot.send_message(message.chat.id, "В настоящее время нет активных акций.")
-    except:
+    except Exception as e:
         bot.send_message(message.chat.id, "Ошибка при регистрации пользователя или отправке текущей акции...")
+        print(e)
 
 # Обработчик для начала обновления акции
 @bot.message_handler(commands=['update_promotion'])
