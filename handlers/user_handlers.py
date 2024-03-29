@@ -9,15 +9,18 @@ from loader import bot
 # Обработчики команд
 @bot.message_handler(commands=['start'])
 def handle_start(message):
-    user_id = message.from_user.id
-    if not is_user_registered(user_id):
-        register_new_user(user_id)
-    current_promotion = get_current_promotion()
-    if current_promotion:
-        # Текст, фото, видео и кнопка (если есть) должны быть отправлены пользователю
-        send_full_promotion(message.chat.id, current_promotion)
-    else:
-        bot.send_message(message.chat.id, "В настоящее время нет активных акций.")
+    try:
+      user_id = message.from_user.id
+      if not is_user_registered(user_id):
+          register_new_user(user_id)
+      current_promotion = get_current_promotion()
+      if current_promotion:
+          # Текст, фото, видео и кнопка (если есть) должны быть отправлены пользователю
+          send_full_promotion(message.chat.id, current_promotion)
+      else:
+          bot.send_message(message.chat.id, "В настоящее время нет активных акций.")
+    except:
+        bot.send_message(message.chat.id, "Ошибка при регистрации пользователя или отправке текущей акции...")
 
 # Обработчик для начала обновления акции
 @bot.message_handler(commands=['update_promotion'])
@@ -262,7 +265,7 @@ def save_promotion_to_db(draft, admin_chat_id):
 # Функция отправки акции всем пользователям
 def send_promotion_to_all_users(admin_chat_id):
     conn = get_db_connection()
-    promotion = get_current_promotion()  
+    promotion = get_current_promotion()
     if not promotion:
         bot.send_message(admin_chat_id, "Нет активных акций для рассылки.")
         return
@@ -270,12 +273,22 @@ def send_promotion_to_all_users(admin_chat_id):
     with conn.cursor() as cursor:
         cursor.execute("SELECT user_id FROM users")
         users = cursor.fetchall()
+        isError = False
+        countS = 0
+        countE = 0
         for user in users:
             try:
                 send_full_promotion(user[0], promotion)
-                bot.send_message(admin_chat_id, "Акция разослана всем пользователям.")
+                countS += 1
             except Exception as e:
+                isError = True
+                countE += 1
                 print(f"Не удалось отправить сообщение пользователю {user[0]}: {e}")
-                bot.send_message(admin_chat_id, "Возникла ошибка при отправке акции")
-    conn.close()
+        if isError:
+           bot.send_message(admin_chat_id, "Возникла ошибка при отправке " + str(countE) + " пользователей")
+        else:
+           bot.send_message(admin_chat_id, "Акция разослана всем пользователям")
+           bot.send_message(admin_chat_id, str(countS))
+        conn.close()
+
     

@@ -7,7 +7,7 @@ sql_commands = """
 
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    user_id INT UNIQUE NOT NULL,
+    user_id BIGINT UNIQUE NOT NULL,
     is_admin BOOLEAN DEFAULT FALSE,
     join_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS promotions (
 
 CREATE TABLE IF NOT EXISTS administrators (
     id SERIAL PRIMARY KEY,
-    user_id INT UNIQUE NOT NULL,
+    user_id BIGINT UNIQUE NOT NULL,
     added_by INT,
     added_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (added_by) REFERENCES users (user_id) ON DELETE SET NULL
